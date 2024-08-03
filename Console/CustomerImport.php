@@ -81,20 +81,10 @@ class CustomerImport extends Command
             $inputProfile = strtolower($input->getArgument(self::PROFILE_NAME));
             $inputFile = $input->getArgument(self::FILE_NAME);
             $readerList = $this->reader->getReaders();
-            $reader = $readerList[$inputProfile];
             $file = $this->moduleDir->getDir('Swapnil_CustomCustomerImport')
                 . DIRECTORY_SEPARATOR . 'Files' . DIRECTORY_SEPARATOR . $inputFile;
 
-            switch ($inputProfile) {
-                case 'sample-csv':
-                    $customerData = $this->parseCsv($file, $reader);
-                    break;
-                case 'sample-json':
-                    $customerData = $this->parseJson($file, $reader);
-                    break;
-                default:
-                    throw new \Exception('Not valid profile added');
-            }
+            $customerData = $this->getCustomerData($inputProfile, $file, $readerList);
             $this->processCustomers($customerData);
             $output->writeln("<info>Customer imported successfully</info>");
         } catch (\Exception $e) {
@@ -102,6 +92,22 @@ class CustomerImport extends Command
             return Cli::RETURN_FAILURE;
         }
         return Cli::RETURN_SUCCESS;
+    }
+
+    /**
+     * get customer data
+     */
+    public function getCustomerData($inputProfile, $file, $readerList)
+    {
+        $reader = $readerList[$inputProfile];
+        switch ($inputProfile) {
+            case 'sample-csv':
+                return $this->parseCsv($file, $reader);
+            case 'sample-json':
+                return $this->parseJson($file, $reader);
+            default:
+                throw new \Exception('Not valid profile added');
+        }
     }
 
     /**
