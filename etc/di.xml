@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Swapnil\CustomCustomerImport\Api\ReaderInterface" type="Swapnil\CustomCustomerImport\Model\Reader" />
+   <type name="Magento\Framework\Console\CommandList">
+       <arguments>
+           <argument name="commands" xsi:type="array">
+               <item name="customer_import" xsi:type="object">Swapnil\CustomCustomerImport\Console\CustomerImport</item>
+           </argument>
+       </arguments>
+   </type>
+    <virtualType name="importReaderPool" type="Swapnil\CustomCustomerImport\Model\ReaderPool">
+        <arguments>
+            <argument name="readers" xsi:type="array">
+                <item name="sample-csv" xsi:type="string">Magento\Framework\File\Csv</item>
+                <item name="sample-json" xsi:type="string">Magento\Framework\Serialize\Serializer\Json</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Swapnil\CustomCustomerImport\Api\ReaderInterface">
+        <arguments>
+            <item name="readerPool" xsi:type="object">importReaderPool</item>
+        </arguments>
+    </type>
+</config>
